@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from input_velodyne import *
 import glob
+import time
 
 def batch_norm(inputs, phase_train, decay=0.9, eps=1e-5):
     """Batch Normalization
@@ -304,7 +305,10 @@ def test(batch_num, velodyne_path, label_path=None, calib_path=None, resolution=
         y_pred = model.y
         objectness = sess.run(objectness, feed_dict={voxel: voxel_x})[0, :, :, :, 0]
         cordinate = sess.run(cordinate, feed_dict={voxel: voxel_x})[0]
+        start_time = time.time()
         y_pred = sess.run(y_pred, feed_dict={voxel: voxel_x})[0, :, :, :, 0]
+        end_time = time.time()
+        print("--- %s ms ---" % ((end_time - start_time) * 1000))
         print objectness.shape, objectness.max(), objectness.min()
         print y_pred.shape, y_pred.max(), y_pred.min()
 
@@ -398,7 +402,7 @@ if __name__ == '__main__':
     # train_test(1, pcd_path, label_path=label_path, resolution=0.1, calib_path=calib_path, dataformat="bin", is_velo_cam=True, \
     #         scale=8, voxel_shape=(800, 800, 40), x=(0, 80), y=(-40, 40), z=(-2.5, 1.5))
 
-    pcd_path = "/home/katou01/download/testing/velodyne/002397.bin"
-    calib_path = "/home/katou01/download/testing/calib/002397.txt"
+    pcd_path = "data/velodyne/002397.bin"
+    calib_path = "data/calib/002397.txt"
     test(1, pcd_path, label_path=None, resolution=0.1, calib_path=calib_path, dataformat="bin", is_velo_cam=True, \
             scale=8, voxel_shape=(800, 800, 40), x=(0, 80), y=(-40, 40), z=(-2.5, 1.5))
